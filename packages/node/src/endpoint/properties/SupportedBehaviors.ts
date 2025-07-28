@@ -108,6 +108,11 @@ export namespace SupportedBehaviors {
 
 function addBehaviors(target: SupportedBehaviors, types: SupportedBehaviors.List) {
     for (const type of types) {
+
+        if (undefined === type){
+            continue;
+        }
+
         if (typeof type.id !== "string") {
             throw new ImplementationError("Behavior type has no ID");
         }
