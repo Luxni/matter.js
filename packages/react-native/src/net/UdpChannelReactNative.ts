@@ -108,7 +108,7 @@ export class UdpChannelReactNative implements UdpChannel {
             socketOptions.ipv6Only = true;
         }
         const socket = await createDgramSocket(listeningAddress, listeningPort, socketOptions);
-        socket.setBroadcast(true);
+        // socket.setBroadcast(true);
         let netInterfaceZone: string | undefined;
         if (netInterface !== undefined) {
             netInterfaceZone = netInterface;
@@ -119,7 +119,7 @@ export class UdpChannelReactNative implements UdpChannel {
                     throw new NoAddressAvailableError(`No IPv4 addresses on interface "${netInterface}"`);
                 }
             } else {
-                multicastInterface = `::%${netInterfaceZone}`;
+                multicastInterface = `::%wlan0`;
             }
             logger.debug(
                 "Initialize multicast",
