@@ -9,6 +9,7 @@ import {
     Channel,
     ChannelType,
     Diagnostic,
+    Environment,
     InternalError,
     Logger,
     NetInterface,
@@ -26,12 +27,12 @@ import {
     BTP_CONN_RSP_TIMEOUT_MS,
     BTP_MAXIMUM_WINDOW_SIZE,
     BTP_SUPPORTED_VERSIONS,
-    Ble,
     BleChannel,
     BleError,
     BtpCodec,
     BtpFlowError,
     BtpSessionHandler,
+    ScannerSet,
 } from "#protocol";
 import {
     BleErrorCode,
@@ -40,6 +41,7 @@ import {
     BleError as ReactNativeBleError,
     Subscription,
 } from "react-native-ble-plx";
+
 import { BleScanner } from "./BleScanner.js";
 
 const logger = Logger.get("BleChannel");
@@ -56,10 +58,12 @@ export class ReactNativeBleCentralInterface implements NetInterface {
             throw new InternalError(`Network Interface was not added to the system yet.`);
         }
 
+        const bleScanner = Environment.default.get(ScannerSet).scannerFor(ChannelType.BLE) as BleScanner;
+        if(!bleScanner){
+            throw new Error(`get ble scanner error.`);
+        }
         // Get the peripheral by address and connect to it.
-        const { peripheral, hasAdditionalAdvertisementData } = (
-            Ble.get().getBleScanner() as BleScanner
-        ).getDiscoveredDevice(address.peripheralAddress);
+        const { peripheral, hasAdditionalAdvertisementData } = bleScanner.getDiscoveredDevice(address.peripheralAddress);
         if (this.openChannels.has(address)) {
             throw new BleError(
                 `Peripheral ${address.peripheralAddress} is already connected. Only one connection supported right now.`,
@@ -69,6 +73,8 @@ export class ReactNativeBleCentralInterface implements NetInterface {
         let device: Device;
         try {
             device = await peripheral.connect();
+            // request MTU
+            device = await device.requestMTU(241 + 3);
         } catch (error) {
             if (error instanceof ReactNativeBleError && error.errorCode === BleErrorCode.DeviceAlreadyConnected) {
                 device = peripheral;
@@ -85,7 +91,8 @@ export class ReactNativeBleCentralInterface implements NetInterface {
 
         for (const service of services) {
             logger.debug(`found service: ${service.uuid}`);
-            if (service.uuid !== BLE_MATTER_SERVICE_UUID) continue;
+            // if (service.uuid !== BLE_MATTER_SERVICE_UUID) continue;
+            if (!service.uuid.includes(BLE_MATTER_SERVICE_UUID) ) continue;
 
             // So, discover its characteristics.
             const characteristics = await device.characteristicsForService(service.uuid);
@@ -99,17 +106,17 @@ export class ReactNativeBleCentralInterface implements NetInterface {
                 logger.debug("found characteristic:", characteristic.uuid);
 
                 switch (characteristic.uuid) {
-                    case BLE_MATTER_C1_CHARACTERISTIC_UUID:
+                    case BLE_MATTER_C1_CHARACTERISTIC_UUID.toLowerCase():
                         logger.debug("found C1 characteristic");
                         characteristicC1ForWrite = characteristic;
                         break;
 
-                    case BLE_MATTER_C2_CHARACTERISTIC_UUID:
+                    case BLE_MATTER_C2_CHARACTERISTIC_UUID.toLowerCase():
                         logger.debug("found C2 characteristic");
                         characteristicC2ForSubscribe = characteristic;
                         break;
 
-                    case BLE_MATTER_C3_CHARACTERISTIC_UUID:
+                    case BLE_MATTER_C3_CHARACTERISTIC_UUID.toLowerCase():
                         logger.debug("found C3 characteristic");
                         if (hasAdditionalAdvertisementData) {
                             logger.debug("reading additional commissioning related data");

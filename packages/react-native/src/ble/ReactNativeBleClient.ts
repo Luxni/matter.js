@@ -5,13 +5,13 @@
  */
 
 import { Bytes, Diagnostic, Logger, MatterError } from "#general";
-import { BLE_MATTER_SERVICE_UUID } from "#protocol";
+// import { BLE_MATTER_SERVICE_UUID } from "#protocol";
 import { BleError, BleErrorCode, BleManager, State as BluetoothState, Device } from "react-native-ble-plx";
 
 const logger = Logger.get("ReactNativeBleClient");
 
-export class BluetoothUnauthorizedError extends MatterError {}
-export class BluetoothUnsupportedError extends MatterError {}
+export class BluetoothUnauthorizedError extends MatterError { }
+export class BluetoothUnsupportedError extends MatterError { }
 
 export class ReactNativeBleClient {
     private readonly bleManager = new BleManager();
@@ -53,7 +53,7 @@ export class ReactNativeBleClient {
                     subscription.remove();
                     void this.stopScanning();
             }
-        });
+        },true);
     }
 
     public setDiscoveryCallback(callback: (peripheral: Device, manufacturerData: Uint8Array) => void) {
@@ -70,23 +70,30 @@ export class ReactNativeBleClient {
         if (this.bleState === BluetoothState.PoweredOn) {
             logger.debug("Start BLE scanning for Matter Services ...");
             this.isScanning = true;
-            await this.bleManager.startDeviceScan([BLE_MATTER_SERVICE_UUID], {}, (error, peripheral) => {
-                if (error !== null || peripheral === null) {
-                    this.isScanning = false;
-                    logger.error("Error while scanning for BLE devices", error);
-                    if (this.shouldScan) {
-                        this.startScanning().catch(error =>
-                            logger.error("Error while restarting scanning after error", error),
-                        );
-                    } else {
-                        this.stopScanning().catch(error =>
-                            logger.error("Error while stopping scanning after error", error),
-                        );
+            await this.bleManager.startDeviceScan(
+                null,
+                {
+                    allowDuplicates: false,
+                    scanMode: 2, // Low Latency
+                    callbackType: 1, // All matches
+                },
+                (error, peripheral) => {
+                    if (error !== null || peripheral === null) {
+                        this.isScanning = false;
+                        logger.error("Error while scanning for BLE devices", error);
+                        if (this.shouldScan) {
+                            this.startScanning().catch(error =>
+                                logger.error("Error while restarting scanning after error", error),
+                            );
+                        } else {
+                            this.stopScanning().catch(error =>
+                                logger.error("Error while stopping scanning after error", error),
+                            );
+                        }
+                        return;
                     }
-                    return;
-                }
-                this.handleDiscoveredDevice(peripheral);
-            });
+                    this.handleDiscoveredDevice(peripheral);
+                });
         } else {
             logger.debug("ble state is not poweredOn ... delay scanning till poweredOn");
         }
@@ -111,7 +118,7 @@ export class ReactNativeBleClient {
             logger.info(`Peripheral ${peripheral.id} is not connectable ... ignoring`);
             return;
         }
-        const matterServiceDataBase64 = peripheral.serviceData?.[BLE_MATTER_SERVICE_UUID];
+        const matterServiceDataBase64 = peripheral.serviceData?.["0000fff6-0000-1000-8000-00805f9b34fb"];
         if (matterServiceDataBase64 === undefined) {
             logger.info(`Peripheral ${peripheral.id} does not advertise Matter Service ... ignoring`);
             return;
