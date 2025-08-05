@@ -28,7 +28,7 @@ import {
 } from "#general";
 
 import { ec } from "elliptic";
-import { createHmac } from "react-native-quick-crypto/lib/typescript/src/Hmac.js";
+import { createHmac } from "crypto";
 
 const SIGNATURE_ALGORITHM = <EcdsaParams>{
     name: "ECDSA",
@@ -213,13 +213,29 @@ export class ReactNativeCrypto extends Crypto {
         info: Uint8Array,
         length: number = CRYPTO_SYMMETRIC_KEY_LENGTH,
     ) {
-        const key = _createHkdfKey("sha256", secret, salt, info, length);
-        return key;
+        return new Promise<Uint8Array>((resolve, reject) => {
+            const key = _createHkdfKey("sha256", secret, salt, info, length);
+            if (key) {
+                resolve(key);
+            }
+            else {
+                reject(`createHkdfKey error!`);
+            }
+        });
     }
 
     async signHmac(secret: Uint8Array, data: Uint8Array) {
-        const key = createHmac("sha256", secret).update(data).digest();
-        return key;
+        return new Promise<Uint8Array>(
+            (resolve, reject) => {
+                const key = createHmac("sha256", secret).update(data).digest();
+                if (key) {
+                    resolve(key);
+                }
+                else {
+                    reject("createHmac error!");
+                }
+            }
+        );
     }
 
     async signEcdsa(key: JsonWebKey, data: Uint8Array | Uint8Array[], dsaEncoding?: CryptoDsaEncoding) {
