@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Events, OfflineEvent, OnlineEvent, QuietEvent } from "#behavior/Events.js";
+import { Events, OfflineEvent, OnlineEvent, QuietEvent } from "../Events.js";
 import { camelize, EventEmitter, GeneratedClass, ImplementationError, Observable } from "#general";
 import {
     ClusterModel,

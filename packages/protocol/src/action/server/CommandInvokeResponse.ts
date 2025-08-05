@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { InteractionSession } from "#action/Interactable.js";
-import { CommandInvokeHandler, CommandTypeProtocol, EndpointProtocol, NodeProtocol } from "#action/protocols.js";
-import { Invoke } from "#action/request/Invoke.js";
-import { InvokeResult } from "#action/response/InvokeResult.js";
-import { AccessControl } from "#action/server/AccessControl.js";
-import { DataResponse, FallbackLimits } from "#action/server/DataResponse.js";
+import { InteractionSession } from "../Interactable.js";
+import { CommandInvokeHandler, CommandTypeProtocol, EndpointProtocol, NodeProtocol } from "../protocols.js";
+import { Invoke } from "../request/Invoke.js";
+import { InvokeResult } from "../response/InvokeResult.js";
+import { AccessControl } from "../server/AccessControl.js";
+import { DataResponse, FallbackLimits } from "../server/DataResponse.js";
 import { Diagnostic, InternalError, Logger } from "#general";
 import { CommandModel, DataModelPath, ElementTag, FabricIndex as FabricIndexField } from "#model";
 import {

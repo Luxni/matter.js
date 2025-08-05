@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ProtocolStatusMessage, ProtocolStatusMessageSchema } from "#protocol/ProtocolStatusMessage.js";
+import { ProtocolStatusMessage, ProtocolStatusMessageSchema } from "../protocol/ProtocolStatusMessage.js";
 import { SECURE_CHANNEL_PROTOCOL_ID, SecureChannelStatusCode } from "#types";
 
 export type SecureChannelStatusMessage = ProtocolStatusMessage<SecureChannelStatusCode>;

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { type Agent, INSTALL_BEHAVIOR } from "#endpoint/Agent.js";
+import { type Agent, INSTALL_BEHAVIOR } from "../endpoint/Agent.js";
 import {
     AsyncObservable,
     EventEmitter,

@@ -10,7 +10,7 @@ import { Crypto, Observable } from "#general";
 import { ServerEndpointInitializer } from "#node/server/ServerEndpointInitializer.js";
 import type { ServerNode } from "#node/ServerNode.js";
 import { FabricManager, SessionManager } from "#protocol";
-import { ServerNodeStore } from "#storage/server/ServerNodeStore.js";
+import { ServerNodeStore } from "../../storage/server/ServerNodeStore.js";
 import { IdentityService } from "./IdentityService.js";
 
 /**

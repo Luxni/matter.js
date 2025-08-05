@@ -5,8 +5,8 @@
  */
 
 import { StorageContext, Transaction } from "#general";
-import { EndpointStore } from "#storage/EndpointStore.js";
-import { DatasourceStore } from "#storage/server/DatasourceStore.js";
+import { EndpointStore } from "../EndpointStore.js";
+import { DatasourceStore } from "../server/DatasourceStore.js";
 import type { EndpointNumber } from "#types";
 import type { ClientNodeStore } from "./ClientNodeStore.js";
 import { DatasourceCache } from "./DatasourceCache.js";

@@ -6,7 +6,7 @@
 
 import { Endpoint } from "#endpoint/Endpoint.js";
 import { ImplementationError, StorageContext } from "#general";
-import { EndpointStore } from "#storage/EndpointStore.js";
+import { EndpointStore } from "../EndpointStore.js";
 import { DatasourceStore } from "./DatasourceStore.js";
 
 const NUMBER_KEY = "__number__";

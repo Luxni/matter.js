@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { InteractionSession } from "#action/Interactable.js";
-import { AttributeTypeProtocol, ClusterProtocol, EndpointProtocol, NodeProtocol } from "#action/protocols.js";
-import { Write } from "#action/request/Write.js";
-import { WriteResult } from "#action/response/WriteResult.js";
-import { AccessControl } from "#action/server/AccessControl.js";
-import { DataResponse, FallbackLimits } from "#action/server/DataResponse.js";
+import { InteractionSession } from "../Interactable.js";
+import { AttributeTypeProtocol, ClusterProtocol, EndpointProtocol, NodeProtocol } from "../protocols.js";
+import { Write } from "../request/Write.js";
+import { WriteResult } from "../response/WriteResult.js";
+import { AccessControl } from "../server/AccessControl.js";
+import { DataResponse, FallbackLimits } from "../server/DataResponse.js";
 import { Diagnostic, InternalError, Logger } from "#general";
 import { AttributeModel, DataModelPath, ElementTag, FabricIndex as FabricIndexField } from "#model";
 import {
