@@ -42,12 +42,12 @@ interface SocketOptions {
     recvBufferSize?: number | undefined;
     sendBufferSize?: number | undefined;
     lookup?:
-        | ((
-              hostname: string,
-              options: any,
-              callback: (err: Error | null, address: string, family: number) => void,
-          ) => void)
-        | undefined;
+    | ((
+        hostname: string,
+        options: any,
+        callback: (err: Error | null, address: string, family: number) => void,
+    ) => void)
+    | undefined;
 }
 
 interface Socket {
@@ -59,7 +59,7 @@ interface Socket {
     on(event: "error", listener: (error: Error) => void): void;
     removeListener(event: "message", listener: (msg: Uint8Array, rinfo: RemoteInfo) => void): void;
     removeListener(event: "error", listener: (error: Error) => void): void;
-    send(msg: Uint8Array, port: number, address: string, callback: (error: Error | null) => void): void;
+    send(msg: Uint8Array, offset?: number, length?: number, port?: number, address?: string, callback?: (error: Error | null) => void): void;
     close(): void;
     address(): { address: string; port: number };
 }
@@ -152,8 +152,7 @@ export class UdpChannelReactNative implements UdpChannel {
                 this.#socket.addMembership(membershipAddress, multicastInterface);
             } catch (error) {
                 logger.warn(
-                    `Error adding membership for address ${membershipAddress}${
-                        multicastInterface ? ` with interface ${multicastInterface}` : ""
+                    `Error adding membership for address ${membershipAddress}${multicastInterface ? ` with interface ${multicastInterface}` : ""
                     }: ${error}`,
                 );
             }
@@ -170,8 +169,7 @@ export class UdpChannelReactNative implements UdpChannel {
                 this.#socket.dropMembership(membershipAddress, multicastInterface);
             } catch (error) {
                 logger.warn(
-                    `Error removing membership for address ${membershipAddress}${
-                        multicastInterface ? ` with interface ${multicastInterface}` : ""
+                    `Error removing membership for address ${membershipAddress}${multicastInterface ? ` with interface ${multicastInterface}` : ""
                     }: ${error}`,
                 );
             }
@@ -198,8 +196,8 @@ export class UdpChannelReactNative implements UdpChannel {
 
     async send(host: string, port: number, data: Uint8Array) {
         return new Promise<void>((resolve, reject) => {
-            this.#socket.send(data, port, host, error => {
-                if (error !== null) {
+            this.#socket.send(data, 0, data.length, port, host, error => {
+                if (error) {
                     reject(repackErrorAs(error, NetworkError) as Error);
                     return;
                 }
