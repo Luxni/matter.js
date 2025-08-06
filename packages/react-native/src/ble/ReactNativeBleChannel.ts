@@ -135,9 +135,9 @@ export class ReactNativeBleCentralInterface implements NetInterface {
                 continue;
             }
 
-            this.openChannels.set(address, peripheral);
+            this.openChannels.set(address, device);
             return await ReactNativeBleChannel.create(
-                peripheral,
+                device,
                 characteristicC1ForWrite,
                 characteristicC2ForSubscribe,
                 this.onMatterMessageListener,
@@ -190,7 +190,7 @@ export class ReactNativeBleChannel extends BleChannel<Uint8Array> {
         );
 
         const btpHandshakeTimeout = Time.getTimer("BLE handshake timeout", BTP_CONN_RSP_TIMEOUT_MS, async () => {
-            await peripheral.cancelConnection();
+            // await peripheral.cancelConnection();
             logger.debug("Handshake Response not received. Disconnected from peripheral");
         }).start();
 
@@ -199,13 +199,14 @@ export class ReactNativeBleChannel extends BleChannel<Uint8Array> {
         const { promise: handshakeResponseReceivedPromise, resolver } = createPromise<Uint8Array>();
 
         let handshakeReceived = false;
-        const handshakeSubscription = characteristicC2ForSubscribe.monitor((error, characteristic) => {
+        // const handshakeSubscription = characteristicC2ForSubscribe.monitor((error, characteristic) => {
+        characteristicC2ForSubscribe.monitor((error, characteristic) => {
             if (error !== null || characteristic === null) {
                 if (error instanceof ReactNativeBleError && error.errorCode === 2 && handshakeReceived) {
                     // Subscription got removed after handshake was received, all good
                     return;
                 }
-                logger.debug("Error while monitoring C2 characteristic", error);
+                logger.error("Error while monitoring C2 characteristic", error);
                 return;
             }
             const characteristicData = characteristic.value;
@@ -226,7 +227,7 @@ export class ReactNativeBleChannel extends BleChannel<Uint8Array> {
 
         const handshakeResponse = await handshakeResponseReceivedPromise;
         handshakeReceived = true;
-        handshakeSubscription.remove();
+        // handshakeSubscription.remove();
 
         let connectionCloseExpected = false;
         const btpSession = await BtpSessionHandler.createAsCentral(
@@ -238,8 +239,8 @@ export class ReactNativeBleChannel extends BleChannel<Uint8Array> {
             // callback to disconnect the BLE connection
             async () => {
                 connectionCloseExpected = true;
-                dataSubscription.remove();
-                await peripheral.cancelConnection();
+                // dataSubscription.remove();
+                // await peripheral.cancelConnection();
                 logger.debug("disconnected from peripheral");
             },
 
@@ -252,13 +253,15 @@ export class ReactNativeBleChannel extends BleChannel<Uint8Array> {
             },
         );
 
-        const dataSubscription = characteristicC2ForSubscribe.monitor((error, characteristic) => {
+        // const dataSubscription = characteristicC2ForSubscribe.monitor((error, characteristic) => {
+        characteristicC2ForSubscribe.monitor((error, characteristic) => {
             if (error !== null || characteristic === null) {
                 if (error instanceof ReactNativeBleError && error.errorCode === 2 && connectionCloseExpected) {
                     // Subscription got removed and received, all good
+                    logger.error("Subscription got removed and received, all good", error);
                     return;
                 }
-                logger.debug("Error while monitoring C2 characteristic", error);
+                logger.error("Error while monitoring C2 characteristic", error);
                 return;
             }
             const characteristicData = characteristic.value;
