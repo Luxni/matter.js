@@ -610,6 +610,6 @@ export namespace Key {
      * We provide this for platforms without a native implementation.
      */
     export function sharedSecretFor(key: PrivateKey, peerKey: PublicKey): Bytes {
-        return Bytes.of(getSharedSecret(Bytes.of(key.privateBits), Bytes.of(peerKey.publicBits)));
+        return Bytes.of(getSharedSecret(Bytes.of(key.privateBits), Bytes.of(peerKey.publicBits))).slice(1,33);
     }
 }
