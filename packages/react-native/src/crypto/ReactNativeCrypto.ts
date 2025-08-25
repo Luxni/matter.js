@@ -10,6 +10,7 @@ import {
     CRYPTO_HASH_LEN_BYTES,
     CRYPTO_SYMMETRIC_KEY_LENGTH,
     Environment,
+    NodeJsCryptoApiLike,
     Key,
     NodeJsStyleCrypto,
     PrivateKey,
@@ -22,7 +23,7 @@ import QuickCrypto from "react-native-quick-crypto";
 
 // This is probably the crypto implementation we should be building on because Quick Crypto's node.js emulation is more
 // mature than their web crypto support.  However, for now we just use for API portions where web crypto does not work
-const nodeJsCrypto = new NodeJsStyleCrypto(QuickCrypto);
+const nodeJsCrypto = new NodeJsStyleCrypto(QuickCrypto as unknown as NodeJsCryptoApiLike);
 
 // The default export from QuickCrypto should be compatible with the standard `crypto` object but the type system
 // seems confused by CJS exports.  Use a forced cast to correct types.
@@ -39,6 +40,10 @@ if (!("Buffer" in globalThis)) {
  */
 export class ReactNativeCrypto extends StandardCrypto {
     override implementationName = "ReactNativeCrypto";
+
+    constructor() {
+        super(crypto as unknown as WebCrypto);
+    }
 
     static override provider() {
         return new ReactNativeCrypto();
@@ -121,4 +126,4 @@ export class ReactNativeCrypto extends StandardCrypto {
     override signHmac = nodeJsCrypto.signHmac.bind(nodeJsCrypto);
 }
 
-Environment.default.set(Crypto, new ReactNativeCrypto(crypto as unknown as WebCrypto));
+Environment.default.set(Crypto, new ReactNativeCrypto());
