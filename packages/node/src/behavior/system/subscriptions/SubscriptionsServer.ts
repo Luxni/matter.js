@@ -48,91 +48,94 @@ export class SubscriptionsBehavior extends Behavior {
         this.reactTo(sessions.events.subscriptionAdded, this.#addSubscription, { lock: true });
     }
 
-    static override readonly schema = new DatatypeModel(
-        {
-            name: "SubscriptionState",
-            type: "struct",
-        },
-        FieldElement(
+    // static override readonly schema = new DatatypeModel(
+    static override get schema() {
+        return new DatatypeModel(
             {
-                name: "subscriptions",
-                type: "list",
-                quality: "N",
-                conformance: "M",
-                default: [],
+                name: "SubscriptionState",
+                type: "struct",
             },
             FieldElement(
                 {
-                    name: "entry",
-                    type: "struct",
+                    name: "subscriptions",
+                    type: "list",
+                    quality: "N",
+                    conformance: "M",
+                    default: [],
                 },
-                FieldElement({ name: "subscriptionId", type: "uint32" }),
                 FieldElement(
                     {
-                        name: "peerAddress",
+                        name: "entry",
                         type: "struct",
                     },
-                    FieldElement({ name: "fabricIndex", type: "fabric-id" }),
-                    FieldElement({ name: "nodeId", type: "node-id" }),
-                ),
-                FieldElement(
-                    {
-                        name: "attributeRequests",
-                        type: "list",
-                    },
+                    FieldElement({ name: "subscriptionId", type: "uint32" }),
                     FieldElement(
                         {
-                            name: "entry",
+                            name: "peerAddress",
                             type: "struct",
                         },
-                        FieldElement({ name: "enableTagCompression", type: "bool", conformance: "O" }),
-                        FieldElement({ name: "nodeId", type: "node-id", conformance: "O" }),
-                        FieldElement({ name: "endpointId", type: "endpoint-no", conformance: "O" }),
-                        FieldElement({ name: "clusterId", type: "cluster-id", conformance: "O" }),
-                        FieldElement({ name: "attributeId", type: "attrib-id", conformance: "O" }),
-                        FieldElement({ name: "listIndex", type: "uint16", conformance: "O" }),
-                        FieldElement({
-                            name: "wildcardPathFlags",
-                            type: "WildcardPathFlagsBitmap",
+                        FieldElement({ name: "fabricIndex", type: "fabric-id" }),
+                        FieldElement({ name: "nodeId", type: "node-id" }),
+                    ),
+                    FieldElement(
+                        {
+                            name: "attributeRequests",
+                            type: "list",
+                        },
+                        FieldElement(
+                            {
+                                name: "entry",
+                                type: "struct",
+                            },
+                            FieldElement({ name: "enableTagCompression", type: "bool", conformance: "O" }),
+                            FieldElement({ name: "nodeId", type: "node-id", conformance: "O" }),
+                            FieldElement({ name: "endpointId", type: "endpoint-no", conformance: "O" }),
+                            FieldElement({ name: "clusterId", type: "cluster-id", conformance: "O" }),
+                            FieldElement({ name: "attributeId", type: "attrib-id", conformance: "O" }),
+                            FieldElement({ name: "listIndex", type: "uint16", conformance: "O" }),
+                            FieldElement({
+                                name: "wildcardPathFlags",
+                                type: "WildcardPathFlagsBitmap",
+                                conformance: "O",
+                            }),
+                        ),
+                    ),
+                    FieldElement(
+                        {
+                            name: "eventRequests",
+                            type: "list",
+                        },
+                        FieldElement(
+                            {
+                                name: "entry",
+                                type: "struct",
+                            },
+                            FieldElement({ name: "nodeId", type: "node-id", quality: "O" }),
+                            FieldElement({ name: "endpointId", type: "endpoint-no", quality: "O" }),
+                            FieldElement({ name: "clusterId", type: "cluster-id", quality: "O" }),
+                            FieldElement({ name: "eventId", type: "event-id", quality: "O" }),
+                            FieldElement({ name: "isUrgent", type: "bool", quality: "O" }),
+                        ),
+                    ),
+                    FieldElement({ name: "isFabricFiltered", type: "bool" }),
+                    FieldElement({ name: "maxIntervalCeiling", type: "duration" }),
+                    FieldElement({ name: "minIntervalFloor", type: "duration" }),
+                    FieldElement({ name: "maxInterval", type: "duration" }),
+                    FieldElement({ name: "sendInterval", type: "duration" }),
+                    FieldElement(
+                        {
+                            name: "operationalAddress",
+                            type: "struct",
                             conformance: "O",
-                        }),
-                    ),
-                ),
-                FieldElement(
-                    {
-                        name: "eventRequests",
-                        type: "list",
-                    },
-                    FieldElement(
-                        {
-                            name: "entry",
-                            type: "struct",
                         },
-                        FieldElement({ name: "nodeId", type: "node-id", quality: "O" }),
-                        FieldElement({ name: "endpointId", type: "endpoint-no", quality: "O" }),
-                        FieldElement({ name: "clusterId", type: "cluster-id", quality: "O" }),
-                        FieldElement({ name: "eventId", type: "event-id", quality: "O" }),
-                        FieldElement({ name: "isUrgent", type: "bool", quality: "O" }),
+                        FieldElement({ name: "type", type: "string" }),
+                        FieldElement({ name: "ip", type: "string" }),
+                        FieldElement({ name: "port", type: "uint16" }),
                     ),
-                ),
-                FieldElement({ name: "isFabricFiltered", type: "bool" }),
-                FieldElement({ name: "maxIntervalCeiling", type: "duration" }),
-                FieldElement({ name: "minIntervalFloor", type: "duration" }),
-                FieldElement({ name: "maxInterval", type: "duration" }),
-                FieldElement({ name: "sendInterval", type: "duration" }),
-                FieldElement(
-                    {
-                        name: "operationalAddress",
-                        type: "struct",
-                        conformance: "O",
-                    },
-                    FieldElement({ name: "type", type: "string" }),
-                    FieldElement({ name: "ip", type: "string" }),
-                    FieldElement({ name: "port", type: "uint16" }),
                 ),
             ),
-        ),
-    );
+        );
+    }
 
     #addSubscription(subscription: Subscription) {
         if (this.state.persistenceEnabled === false || !(subscription instanceof ServerSubscription)) return;

@@ -62,7 +62,9 @@ const schema = Base.schema.extend(
 export class GeneralDiagnosticsServer extends Base {
     declare protected internal: GeneralDiagnosticsServer.Internal;
     declare state: GeneralDiagnosticsServer.State;
-    static override readonly schema = schema;
+    static override get schema() {
+        return schema;
+    }
 
     override initialize() {
         if (this.state.testEventTriggersEnabled === undefined) {

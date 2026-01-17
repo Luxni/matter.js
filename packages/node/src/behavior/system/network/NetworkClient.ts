@@ -148,54 +148,56 @@ export class NetworkClient extends NetworkBehavior {
     /**
      * Define logical schema for fields that should persist.
      */
-    static override readonly schema = new DatatypeModel({
-        name: "NetworkState",
-        type: "struct",
+    static override get schema() {
+        return new DatatypeModel({
+            name: "NetworkState",
+            type: "struct",
 
-        children: [
-            FieldElement({
-                name: "defaultSubscription",
-                type: "any",
-                default: { type: "properties", properties: {} },
-                conformance: "O",
-                quality: "N",
-            }),
+            children: [
+                FieldElement({
+                    name: "defaultSubscription",
+                    type: "any",
+                    default: { type: "properties", properties: {} },
+                    conformance: "O",
+                    quality: "N",
+                }),
 
-            FieldElement({
-                name: "isDisabled",
-                type: "bool",
-                quality: "N",
-                default: false,
-            }),
+                FieldElement({
+                    name: "isDisabled",
+                    type: "bool",
+                    quality: "N",
+                    default: false,
+                }),
 
-            FieldElement({
-                name: "autoSubscribe",
-                type: "bool",
-                quality: "N",
-                default: false,
-            }),
+                FieldElement({
+                    name: "autoSubscribe",
+                    type: "bool",
+                    quality: "N",
+                    default: false,
+                }),
 
-            FieldElement({
-                name: "maxEventNumber",
-                type: "event-no",
-                quality: "N",
-                default: EventNumber(0),
-            }),
+                FieldElement({
+                    name: "maxEventNumber",
+                    type: "event-no",
+                    quality: "N",
+                    default: EventNumber(0),
+                }),
 
-            FieldElement({
-                name: "caseAuthenticatedTags",
-                type: "list",
-                quality: "N",
-                conformance: "O",
-                children: [
-                    FieldElement({
-                        name: "entry",
-                        type: "uint32",
-                    }),
-                ],
-            }),
-        ],
-    });
+                FieldElement({
+                    name: "caseAuthenticatedTags",
+                    type: "list",
+                    quality: "N",
+                    conformance: "O",
+                    children: [
+                        FieldElement({
+                            name: "entry",
+                            type: "uint32",
+                        }),
+                    ],
+                }),
+            ],
+        });
+    }
 }
 
 export namespace NetworkClient {

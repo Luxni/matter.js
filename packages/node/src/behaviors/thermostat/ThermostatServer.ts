@@ -94,7 +94,9 @@ export class ThermostatBaseServer extends ThermostatBehaviorLogicBase {
     declare protected internal: ThermostatBaseServer.Internal;
     declare state: ThermostatBaseServer.State;
     declare events: ThermostatBaseServer.Events;
-    static override readonly schema = schema;
+    static override get schema() {
+        return schema;
+    }
 
     override async initialize() {
         if (this.features.scheduleConfiguration) {

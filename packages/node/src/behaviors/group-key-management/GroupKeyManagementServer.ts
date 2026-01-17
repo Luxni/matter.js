@@ -45,7 +45,10 @@ const schema = GroupKeyManagementBehavior.schema.extend(
  */
 export class GroupKeyManagementServer extends GroupKeyManagementBehavior {
     declare state: GroupKeyManagementServer.State;
-    static override readonly schema = schema;
+    // static override readonly schema = schema;
+    static override get schema() {
+        return schema;
+    }
 
     override initialize() {
         if (this.features.cacheAndSync) {

@@ -38,9 +38,9 @@ export class BridgedDeviceBasicInformationServer extends BridgedDeviceBasicInfor
         }
     }
 
-    static override readonly schema = BasicInformationServer.enableUniqueIdPersistence(
-        BridgedDeviceBasicInformationBehavior.schema,
-    );
+    static override get schema() {
+        return BasicInformationServer.enableUniqueIdPersistence(BridgedDeviceBasicInformationBehavior.schema);
+    }
 
     /**
      * Per the specification.  Not sure what this adds vs. subscribing to attribute changes.

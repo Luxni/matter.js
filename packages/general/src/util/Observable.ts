@@ -781,10 +781,16 @@ export class ObservableProxy extends BasicObservable {
     constructor(target: Observable) {
         super();
 
+        // Object.defineProperty(this.#emitter, observant, {
+        //     get() {
+        //         return super.isObserved;
+        //     },
+        // });
+
         Object.defineProperty(this.#emitter, observant, {
-            get() {
-                return super.isObserved;
-            },
+            value: super.isObserved,
+            writable: true,
+            configurable: true,
         });
 
         this.#target = target;

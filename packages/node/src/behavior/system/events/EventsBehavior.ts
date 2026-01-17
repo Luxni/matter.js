@@ -32,25 +32,27 @@ export class EventsBehavior extends Behavior {
         await events.construction;
     }
 
-    static override schema = new DatatypeModel(
-        {
-            name: "EventsState",
-            type: "struct",
-        },
-        FieldElement({ name: "nonvolatile", type: "bool" }),
-        FieldElement({ name: "numberBlockSize", type: "uint16" }),
-        FieldElement(
-            { name: "buffer", type: "struct" },
-            FieldElement({ name: "minEventAllowance", type: "uint32" }),
-            FieldElement({ name: "maxEventAllowance", type: "uint32" }),
+    static override get schema() {
+        return new DatatypeModel(
+            {
+                name: "EventsState",
+                type: "struct",
+            },
+            FieldElement({ name: "nonvolatile", type: "bool" }),
+            FieldElement({ name: "numberBlockSize", type: "uint16" }),
             FieldElement(
-                { name: "minPriorityEventAllowance", type: "struct" },
-                FieldElement({ name: "critical", type: "uint32" }),
-                FieldElement({ name: "info", type: "uint32" }),
-                FieldElement({ name: "debug", type: "uint32" }),
+                { name: "buffer", type: "struct" },
+                FieldElement({ name: "minEventAllowance", type: "uint32" }),
+                FieldElement({ name: "maxEventAllowance", type: "uint32" }),
+                FieldElement(
+                    { name: "minPriorityEventAllowance", type: "struct" },
+                    FieldElement({ name: "critical", type: "uint32" }),
+                    FieldElement({ name: "info", type: "uint32" }),
+                    FieldElement({ name: "debug", type: "uint32" }),
+                ),
             ),
-        ),
-    );
+        );
+    }
 }
 
 export namespace EventsBehavior {

@@ -148,7 +148,9 @@ export class OtaSoftwareUpdateRequestorServer extends OtaSoftwareUpdateRequestor
     declare events: OtaSoftwareUpdateRequestorServer.Events;
 
     // Enhance the Schema to store the flag that we expect an upgrade to happen
-    static override readonly schema = schema;
+    static override get schema() {
+        return schema;
+    }
 
     override async initialize() {
         // When starting up, and we have an unknown state (which is default), we set it to idle

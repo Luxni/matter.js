@@ -85,16 +85,18 @@ export abstract class RemoteServer extends Behavior {
         }
     }
 
-    static override readonly schema = new DatatypeModel(
-        {
-            name: "ApiState",
-            type: "struct",
-        },
+    static override get schema() {
+        return new DatatypeModel(
+            {
+                name: "ApiState",
+                type: "struct",
+            },
 
-        FieldElement({ name: "address", type: "string" }),
-        FieldElement({ name: "enabled", type: "bool" }),
-        FieldElement({ name: "allowOfflineUse", type: "bool" }),
-    );
+            FieldElement({ name: "address", type: "string" }),
+            FieldElement({ name: "enabled", type: "bool" }),
+            FieldElement({ name: "allowOfflineUse", type: "bool" }),
+        );
+    }
 }
 
 export namespace RemoteServer {

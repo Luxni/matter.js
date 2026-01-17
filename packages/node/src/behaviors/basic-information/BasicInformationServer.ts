@@ -96,7 +96,10 @@ export class BasicInformationServer extends Base {
         }
     }
 
-    static override readonly schema = this.enableUniqueIdPersistence(Base.schema);
+    // static override readonly schema = this.enableUniqueIdPersistence(Base.schema);
+    static override get schema() {
+        return this.enableUniqueIdPersistence(Base.schema);
+    }
 
     static enableUniqueIdPersistence(schema: Schema.Cluster): Schema.Cluster {
         return schema.extend({}, schema.require(AttributeModel, "uniqueId").extend({ quality: "FN" }));

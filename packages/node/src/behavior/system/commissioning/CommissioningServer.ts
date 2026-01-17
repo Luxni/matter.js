@@ -298,15 +298,17 @@ export class CommissioningServer extends Behavior {
     /**
      * Define logical schema to make passcode and discriminator persistent.
      */
-    static override readonly schema = new DatatypeModel({
-        name: "CommissioningState",
-        type: "struct",
+    static override get schema() {
+        return new DatatypeModel({
+            name: "CommissioningState",
+            type: "struct",
 
-        children: [
-            FieldElement({ name: "passcode", type: "uint32", quality: "N" }),
-            FieldElement({ name: "discriminator", type: "uint16", quality: "N" }),
-        ],
-    });
+            children: [
+                FieldElement({ name: "passcode", type: "uint32", quality: "N" }),
+                FieldElement({ name: "discriminator", type: "uint16", quality: "N" }),
+            ],
+        });
+    }
 
     #initializeNode() {
         this.state.commissioned = !!this.agent.get(OperationalCredentialsBehavior).state.commissionedFabrics;
