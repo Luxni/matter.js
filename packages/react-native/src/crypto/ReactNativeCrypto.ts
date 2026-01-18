@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Bytes, Crypto, CryptoError, EcdsaSignature, Entropy, Environment, StandardCrypto, WebCrypto } from "#general";
+import { Bytes, Crypto, CryptoError, EcdsaSignature, Entropy, Environment, Key, PrivateKey, PublicKey, StandardCrypto, WebCrypto } from "#general";
 import { Buffer } from "@craftzdog/react-native-buffer";
 import QuickCrypto from "react-native-quick-crypto";
 
@@ -85,6 +85,10 @@ export class ReactNativeCrypto extends StandardCrypto {
         } catch (e) {
             throw new CryptoError(`Signature verification failed: ${e}`);
         }
+    }
+
+    override async generateDhSecret(key: PrivateKey, peerKey: PublicKey): Promise<Bytes> {
+        return Key.sharedSecretFor(key, peerKey);
     }
 }
 
